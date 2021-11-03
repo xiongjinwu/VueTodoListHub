@@ -7,6 +7,7 @@
       <input 
       type="text"
       v-my-focus
+      ref="inputTitle"
       @blur="bandBlur(todoObj,$event)" 
       v-show="todoObj.isEdit"  
       :value="todoObj.title">
@@ -59,6 +60,9 @@ export default {
          }else{
           this.$set(todoObj,'isEdit','true') //给data中的对象添加一个属性，用$set()
          }
+           this.$nextTick(function(){
+             this.$refs.inputTitle.focus();
+           });
        },
        //失去焦点
        bandBlur(todoObj,e){
