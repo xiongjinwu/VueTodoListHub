@@ -22,6 +22,7 @@ export default {
       //console.log(111,e.target.value)
       if (!this.title.trim()) return alert("内容不能为空！");
       const todoObj = { id: nanoid(), title: this.title, done: false };
+
       //在子准备好数据后，通过$emit() 和自定义事件
       this.$emit('showData',todoObj)
       //清空输入框

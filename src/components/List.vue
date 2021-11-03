@@ -14,7 +14,7 @@ import Item from './Item.vue'
 export default {
     name:'List',
     components:{Item},
-    props:["todos"],//接受app传来的数据
+    props:['todos'],//接受app传来的数据
     data() {
         return {
             

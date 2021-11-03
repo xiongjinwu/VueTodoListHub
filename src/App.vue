@@ -3,7 +3,9 @@
     <div class="todo-container">
     <div class="todo-wrap">
       <my-header @showData="showData"></my-header>
+
       <list :todos="todos" ></list>
+      
       <my-footer :todos="todos" @checkAllTodo="checkAllTodo" @clearAllTodo="clearAllTodo"></my-footer>
     </div>
   </div>
@@ -58,6 +60,12 @@ export default {
           todo.done = done; //不管现在每一项的状态是什么，都听传来的done值
         })
       },
+      //编辑后的新值
+      updataTodo(id,title){
+        this.todos.forEach((todo)=>{
+         if(todo.id === id) todo.title = title; 
+        })
+      },
       //清除已完成的todo项
       clearAllTodo(){
         this.todos = this.todos.filter((todo)=>{
@@ -68,11 +76,14 @@ export default {
    //生命周期
    mounted() {
     this.$bus.$on('checkTodo',this.checkTodo)// 接收到了 item传来的Id判断取消或勾选
+    this.$bus.$on('updateTodo',this.updataTodo)  //收到了编辑后的新值
     // this.$bus.$on('deleteItem',this.deleteItem)  //通过ID 删除一项  全局事件总线方式
      this.pubId = pubsub.subscribe('deleteItem',this.deleteItem) //消息订阅与发布
+
    },
    beforeDestroy(){
      this.$bus.$off(['checkTodo','deleteItem'])//销毁全局事件总线
+     this.$bus.$off('updateTodo')
      pubsub.unsubscribe(this.pubId) //销毁消息订阅与发布
    }
 };
@@ -108,6 +119,17 @@ body {
   background-color: #bd362f;
 }
 
+.btn-edit {
+  color: #fff;
+  background-color: #66da49;
+  border: 1px solid #5cbd2f;
+  margin-right: 5px;
+}
+
+.btn-edit:hover {
+  color: #fff;
+  background-color: #5cbd2f;
+}
 .btn:focus {
   outline: none;
 }

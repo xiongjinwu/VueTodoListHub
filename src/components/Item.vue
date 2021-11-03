@@ -1,10 +1,20 @@
 <template>
   <li>
     <label>
+
       <input @change="handleCheck(todoObj.id)" type="checkbox"  :checked="todoObj.done"/>
-      <span>{{todoObj.title}}</span>
+      <span v-show=" !todoObj.isEdit">{{todoObj.title}}</span>
+      <input 
+      type="text"
+      v-my-focus
+      @blur="bandBlur(todoObj,$event)" 
+      v-show="todoObj.isEdit"  
+      :value="todoObj.title">
+
     </label>
     <button @click="handDelete(todoObj.id)" class="btn btn-danger" >删除</button>
+    <button v-show=" !todoObj.isEdit" @click="handEdit(todoObj)" class="btn btn-edit" >编辑</button>
+    
   </li>
 </template>
 
@@ -18,6 +28,14 @@ export default {
           
       }
   },
+  //自定义指令，让文本框自动获得焦点
+       directives:{
+        'my-focus':{
+           inserted(element,binding){
+            element.focus();
+         }
+        }
+       },
   methods: {
       handleCheck(id){
           console.log('当前点击的ID是：',id)
@@ -31,10 +49,25 @@ export default {
               console.log('当前要删除的id是：',id)
               // this.deleteItem(id);  //不调用方式发送数据了，改为全局事件总线
               // this.$bus.$emit('deleteItem',id)//全局事件总线
-                pubsub.publish('deleteItem',id)
+              pubsub.publish('deleteItem',id) //发布消息订阅 传参给App组件
           }
-      },
-  },
+       },
+       //编辑的方法
+       handEdit(todoObj){
+         if(todoObj.hasOwnProperty('isEdit')){
+           todoObj.isEdit = true;
+         }else{
+          this.$set(todoObj,'isEdit','true') //给data中的对象添加一个属性，用$set()
+         }
+       },
+       //失去焦点
+       bandBlur(todoObj,e){
+         todoObj.isEdit = false;//失去焦点改变isEdit的状态，并且更改修改后的值，给App传过去
+          console.log('失去焦点，编辑后的新值和对应的id：',todoObj.id,e.target.value)
+          if ( ! e.target.value.trim()) return alert('修改内容不能为空！')
+        this.$bus.$emit('updateTodo',todoObj.id,e.target.value)
+       }
+    },
   
 }
 </script>
