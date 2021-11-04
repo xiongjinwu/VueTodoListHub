@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <input v-model="keyWords" type="text" >
+    <button @click="searchGithub">点击搜索GitHub用户</button>
     <div class="todo-container">
     <div class="todo-wrap">
       <my-header @showData="showData"></my-header>
@@ -14,6 +16,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import pubsub from 'pubsub-js' //引入第三方库，消息订阅与发布
 import MyHeader from "./components/MyHeader.vue";
 import List from "./components/List.vue";
@@ -23,6 +26,7 @@ export default {
   components: { MyHeader,MyFooter,List},
   data() {
         return {
+          keyWords:'',
             todos:JSON.parse(localStorage.getItem('todos')) || []
         }
     },
@@ -36,6 +40,14 @@ export default {
      }
   },
   methods: {
+    searchGithub(){
+      axios.get(`https://api.github.com/search/users?q=${this.keyWords}`).then(
+        (res)=>{
+          console.log(res.data)
+        },
+        (err)=>{console.log(err)}
+      )
+    },
       //获取List中的数据方法  子传父
       showData(datas){
         console.log('我是父元素，收到了子的数据',datas);
