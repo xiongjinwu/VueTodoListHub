@@ -1,7 +1,12 @@
 <template>
-  <li>
+<!-- 加入动画 -->
+ <transition 
+  appear
+  name="animate__animated animate__bounce"
+  enter-active-class="animate__bounceInRight"
+  leave-active-class="animate__backOutUp">
+    <li>
     <label>
-
       <input @change="handleCheck(todoObj.id)" type="checkbox"  :checked="todoObj.done"/>
       <span v-show=" !todoObj.isEdit">{{todoObj.title}}</span>
       <input 
@@ -15,12 +20,13 @@
     </label>
     <button @click="handDelete(todoObj.id)" class="btn btn-danger" >删除</button>
     <button v-show=" !todoObj.isEdit" @click="handEdit(todoObj)" class="btn btn-edit" >编辑</button>
-    
   </li>
+ </transition>
 </template>
 
 <script>
-import pubsub from 'pubsub-js'
+import 'animate.css' //引入第三方动画库
+import pubsub from 'pubsub-js'//消息发布与订阅插件
 export default {
   name: "Item",
   props:['todoObj'],
